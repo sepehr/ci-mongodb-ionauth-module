@@ -1166,16 +1166,19 @@ class Ion_auth_mongodb_model extends CI_Model {
 	{
 		$this->trigger_events('result');
 
-		foreach ($this->response as $key => $value)
+		if (! empty($this->response))
 		{
-			// We need to add an arbitrary "id" field to the resulted
-			// object to maintain IonAuth compatibility with both
-			// mongodb library and the native database drivers with
-			// minimum level of code change.
-			$this->response[$key] = $this->_clone_mongoid($value);
+			foreach ($this->response as $key => $value)
+			{
+				// We need to add an arbitrary "id" field to the resulted
+				// object to maintain IonAuth compatibility with both
+				// mongodb library and the native database drivers with
+				// minimum level of code change.
+				$this->response[$key] = $this->_clone_mongoid($value);
 
-			// Typecast document results into objects for API consistency
-			$this->response[$key] = (object) $this->response[$key];
+				// Typecast document results into objects for API consistency
+				$this->response[$key] = (object) $this->response[$key];
+			}
 		}
 
 		$result = $this->response;
@@ -1330,9 +1333,15 @@ class Ion_auth_mongodb_model extends CI_Model {
 			->where('_id', new MongoId($id))
 			->limit(1)
 			->get($this->collections['users']);
-		$user = (object) $user[0];
+
+		if (empty($user))
+		{
+			$this->response = new stdClass;
+			return $this;
+		}
 
 		// Buildup user groups data array
+		$user = (object) $user[0];
 		foreach ($user->groups as $group_id)
 		{
 			$groups[] = $this->group($group_id)->document();
