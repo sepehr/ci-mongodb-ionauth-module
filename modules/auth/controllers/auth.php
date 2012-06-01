@@ -204,7 +204,7 @@ class Auth extends MX_Controller {
 	//reset password - final step for forgotten password
 	public function reset_password($code = NULL)
 	{
-		if (!$code)
+		if ( ! $code)
 		{
 			show_404();
 		}
