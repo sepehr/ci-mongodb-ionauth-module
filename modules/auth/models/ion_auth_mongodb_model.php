@@ -528,7 +528,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		$old         = $this->hash_password_db($result->_id, $old);
 		$new         = $this->hash_password($new, $result->salt);
 
-		if ($this->hash_method == 'sha1' && $db_password === $old || $this->hash_method == 'bcrypt' && $old === TRUE)
+		if ($old === TRUE)
 		{
 			$this->trigger_events('extra_where');
 
@@ -864,7 +864,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 			$user = (object) $document[0];
 			$password = $this->hash_password_db($user->_id, $password);
 
-			if ($this->hash_method == 'sha1' && $user->password === $password || $this->hash_method == 'bcrypt' && $password === TRUE)
+			if ($password === TRUE)
 			{
 				// Not yet activated?
                 if ($user->active == 0)
