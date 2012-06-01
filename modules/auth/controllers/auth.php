@@ -8,14 +8,16 @@ class Auth extends MX_Controller {
 		$this->load->library('ion_auth');
 		$this->load->library('session');
 		$this->load->library('form_validation');
-		$this->load->database();
 		$this->load->helper('url');
+		// Load MongoDB library instead of native db driver
+		$this->config->item('use_mongodb', 'ion_auth') ?
+			$this->load->library('mongo_db') :
+			$this->load->database();
 	}
 
 	//redirect if needed, otherwise display the user list
 	function index()
 	{
-
 		if (!$this->ion_auth->logged_in())
 		{
 			//redirect them to the login page
@@ -37,7 +39,6 @@ class Auth extends MX_Controller {
 			{
 				$data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
 			}
-
 
 			$this->load->view('auth/index', $data);
 		}
@@ -174,8 +175,9 @@ class Auth extends MX_Controller {
 		if ($this->form_validation->run() == false)
 		{
 			//setup the input
-			$data['email'] = array('name' => 'email',
-				'id' => 'email',
+			$data['email'] = array(
+				'name' => 'email',
+				'id'   => 'email',
 			);
 			//set any errors and display the form
 			$data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
@@ -219,7 +221,7 @@ class Auth extends MX_Controller {
 				$data['new_password'] = array(
 					'name' => 'new',
 					'id'   => 'new',
-				'type' => 'password',
+					'type' => 'password',
 					'pattern' => '^.{'.$data['min_password_length'].'}.*$',
 				);
 				$data['new_password_confirm'] = array(
@@ -303,11 +305,11 @@ class Auth extends MX_Controller {
 	function deactivate($id = NULL)
 	{
 		// no funny business, force to integer
-		$id = (int) $id;
+		$id = (string) $id;
 
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('confirm', 'confirmation', 'required');
-		$this->form_validation->set_rules('id', 'user ID', 'required|is_natural');
+		$this->form_validation->set_rules('id', 'user ID', 'required|alpha_numeric');
 
 		if ($this->form_validation->run() == FALSE)
 		{
