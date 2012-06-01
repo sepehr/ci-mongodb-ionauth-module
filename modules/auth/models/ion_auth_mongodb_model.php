@@ -2,7 +2,7 @@
 /**
  * IonAuth MongoDB Model
  *
- * A minor rewrite of IonAuth model to use MongoDB as database backend. It
+ * A rewrite of IonAuth model to use MongoDB as database backend. It
  * requires CodeIgniter MongoDB Active Record library installed. The class
  * is designed to work with CodeIgniter v2.0+ and Modular Extensions in place.
  *
@@ -279,15 +279,18 @@ class Ion_auth_mongodb_model extends CI_Model {
 			return FALSE;
 		}
 
+		// SHA1
 		if ($this->store_salt)
 		{
-			return sha1($password . $hash_password_db->salt);
+			$db_password = sha1($password . $hash_password_db->salt);
 		}
 		else
 		{
 			$salt = substr($hash_password_db->password, 0, $this->salt_length);
-			return $salt . substr(sha1($salt . $password), 0, -$this->salt_length);
+			$db_password = $salt . substr(sha1($salt . $password), 0, -$this->salt_length);
 		}
+
+		return ($db_password == $hash_password_db->password);
 	}
 
 	// ------------------------------------------------------------------------
