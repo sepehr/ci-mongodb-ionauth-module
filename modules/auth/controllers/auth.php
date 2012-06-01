@@ -9,7 +9,7 @@ class Auth extends MX_Controller {
 		$this->load->library('session');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
-		// Load MongoDB library instead of native db driver
+		// Load MongoDB library instead of native db driver if required
 		$this->config->item('use_mongodb', 'ion_auth') ?
 			$this->load->library('mongo_db') :
 			$this->load->database();
@@ -202,8 +202,13 @@ class Auth extends MX_Controller {
 	}
 
 	//reset password - final step for forgotten password
-	public function reset_password($code)
+	public function reset_password($code = NULL)
 	{
+		if (!$code)
+		{
+			show_404();
+		}
+
 		$user = $this->ion_auth->forgotten_password_check($code);
 
 		if ($user)
@@ -304,7 +309,6 @@ class Auth extends MX_Controller {
 	//deactivate the user
 	function deactivate($id = NULL)
 	{
-		// no funny business, force to integer
 		$id = (string) $id;
 
 		$this->load->library('form_validation');
