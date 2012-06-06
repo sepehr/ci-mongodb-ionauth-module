@@ -1344,7 +1344,7 @@ class Ion_auth_mongodb_model extends CI_Model {
 		$user = (object) $user[0];
 		foreach ($user->groups as $group_id)
 		{
-			$groups[] = $this->group($group_id)->document();
+			$groups[] = $this->where('_id', new MongoId($group_id))->group()->document();
 		}
 
 		$this->response = $groups;
@@ -1462,12 +1462,11 @@ class Ion_auth_mongodb_model extends CI_Model {
 	 *
 	 * @return object
 	 */
-	public function group($id)
+	public function group()
 	{
 		$this->trigger_events('group');
 
 		// Set query parameters
-		$this->where('_id', new MongoId($id));
 		$this->limit(1);
 
 		// Execute and return results
