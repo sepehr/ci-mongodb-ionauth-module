@@ -60,7 +60,7 @@ class Ion_auth
 		// We assign the model object to "ion_auth_model" variable.
 		$this->config->item('use_mongodb', 'ion_auth') ?
 			$this->load->model('auth/ion_auth_mongodb_model', 'ion_auth_model') :
-			$this->load->model('ion_auth_model');
+			$this->load->model('auth/ion_auth_model');
 
 		//auto-login the user if they are remembered
 		if (!$this->logged_in() && get_cookie('identity') && get_cookie('remember_code'))

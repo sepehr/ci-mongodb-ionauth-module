@@ -5,7 +5,7 @@ class Auth extends MX_Controller {
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->library('ion_auth');
+		$this->load->library('auth/ion_auth');
 		$this->load->library('session');
 		$this->load->library('form_validation');
 		$this->load->helper('url');
